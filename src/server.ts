@@ -13,25 +13,21 @@ let analyzerApp: MiroWorkflowAnalyzerApp | null = null;
 
 app.post('/api/analyze', async (req: Request, res: Response) => {
   try {
-    const { projectId, boardId, outputDir } = req.body;
-
-    if (!projectId) {
-      return res.status(400).json({ error: 'Project ID is required' });
-    }
+    const { boardId, outputDir, workflowName } = req.body;
 
     if (!boardId) {
       return res.status(400).json({ error: 'Board ID is required' });
     }
 
-    console.log(`🚀 Starting workflow analysis for project ${projectId}, board ${boardId}`);
+    console.log(`🚀 Starting workflow analysis for board ${boardId}`);
 
-    analyzerApp = new MiroWorkflowAnalyzerApp(projectId);
-    await analyzerApp.analyzeBoardWorkflow(boardId, outputDir);
+    analyzerApp = new MiroWorkflowAnalyzerApp();
+    const result = await analyzerApp.analyzeBoardWorkflow(boardId, outputDir, workflowName);
 
     res.json({ 
       success: true, 
       message: 'Workflow analysis completed successfully',
-      projectId,
+      projectId: result.projectId,
       boardId
     });
 
@@ -46,13 +42,7 @@ app.post('/api/analyze', async (req: Request, res: Response) => {
 
 app.get('/api/boards', async (req: Request, res: Response) => {
   try {
-    const { projectId } = req.query;
-
-    if (!projectId) {
-      return res.status(400).json({ error: 'Project ID is required' });
-    }
-
-    analyzerApp = new MiroWorkflowAnalyzerApp(projectId as string);
+    analyzerApp = new MiroWorkflowAnalyzerApp();
     const boards = await analyzerApp.listBoards();
 
     res.json({ success: true, boards });
@@ -88,7 +78,7 @@ app.listen(port, () => {
   console.log(`🚀 Miro Workflow Analyzer API server running on port ${port}`);
   console.log(`📡 Health check: http://localhost:${port}/health`);
   console.log(`📊 Analyze endpoint: POST http://localhost:${port}/api/analyze`);
-  console.log(`📋 List boards endpoint: GET http://localhost:${port}/api/boards?projectId=<id>`);
+  console.log(`📋 List boards endpoint: GET http://localhost:${port}/api/boards`);
   
   // Start keep-alive timer in production
   if (process.env.NODE_ENV === 'production') {

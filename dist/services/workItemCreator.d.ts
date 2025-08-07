@@ -13,8 +13,9 @@ export interface WorkItemCreationResults {
 export declare class WorkItemCreator {
     private apiClient;
     private projectId;
-    constructor(baseUrl: string, accessToken: string, projectId: number);
-    createWorkItems(insights: OpenAIWorkflowInsights): Promise<WorkItemCreationResults>;
+    constructor(baseUrl: string, accessToken: string, projectId?: number);
+    createProject(workflowName: string): Promise<WorkItemResult>;
+    createWorkItems(insights: OpenAIWorkflowInsights, workflowName?: string): Promise<WorkItemCreationResults>;
     private createEpic;
     private createFeature;
     private createUserStory;

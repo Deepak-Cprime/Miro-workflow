@@ -3,7 +3,7 @@ export class WorkItemCreator {
     apiClient;
     projectId;
     constructor(baseUrl, accessToken, projectId) {
-        this.projectId = projectId;
+        this.projectId = projectId || 0;
         this.apiClient = axios.create({
             baseURL: baseUrl,
             headers: {
@@ -15,13 +15,59 @@ export class WorkItemCreator {
             }
         });
     }
-    async createWorkItems(insights) {
+    async createProject(workflowName) {
+        try {
+            const aiProjectName = `AI_Workflow_${workflowName.replace(/\s+/g, '_')}_Analysis`;
+            const payload = {
+                Name: aiProjectName
+            };
+            console.log('🚀 Creating Project with payload:', JSON.stringify(payload, null, 2));
+            const response = await this.apiClient.post('/api/v1/Project/', payload);
+            // Handle XML response - extract ID from XML
+            let projectId;
+            if (typeof response.data === 'string') {
+                // Parse XML response to get ID
+                const idMatch = response.data.match(/Id="(\d+)"/);
+                projectId = idMatch ? parseInt(idMatch[1]) : 0;
+            }
+            else {
+                projectId = response.data.Id;
+            }
+            // Set the project ID for future use
+            this.projectId = projectId;
+            return {
+                success: true,
+                id: projectId,
+                name: aiProjectName
+            };
+        }
+        catch (error) {
+            console.error('Error creating project:', error.response?.data || error.message);
+            return {
+                success: false,
+                name: `AI_Workflow_${workflowName.replace(/\s+/g, '_')}_Analysis`,
+                error: error.response?.data?.message || error.message
+            };
+        }
+    }
+    async createWorkItems(insights, workflowName) {
         const results = {
             epic: { success: false, name: '' },
             features: [],
             userStories: []
         };
         try {
+            // Step 0: Create Project if not already set
+            if (this.projectId === 0) {
+                console.log('🚀 No project ID set, creating new project...');
+                const projectName = workflowName || 'Miro_Board_Analysis';
+                const projectResult = await this.createProject(projectName);
+                if (!projectResult.success) {
+                    console.error(`❌ Failed to create project: ${projectResult.error}`);
+                    return results;
+                }
+                console.log(`✅ Project "${projectResult.name}" created with ID: ${projectResult.id}`);
+            }
             // Step 1: Create Epic
             console.log('📋 Creating Epic...');
             if (insights.epics.length > 0) {
