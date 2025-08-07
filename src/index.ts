@@ -205,23 +205,27 @@ async function main() {
 🔍 Miro Workflow Analyzer
 
 Usage:
-  npm run analyze <board-id> [output-dir]  - Analyze a specific board
-  npm run analyze list                     - List all available boards
-  npm run analyze help                     - Show this help
+  npm run analyze <project-id> [board-id] [output-dir]  - Analyze with project ID
+  npm run analyze list <project-id>                      - List boards for project
+  npm run analyze help                                   - Show this help
 
 Examples:
-  npm run analyze 3074457345618239763
-  npm run analyze 3074457345618239763 ./reports
-  npm run analyze list
+  npm run analyze 286882 uXjVJXqJT1w= ./reports
+  npm run analyze 286882 uXjVJXqJT1w=
+  npm run analyze list 286882
       `);
       return;
     }
 
-    const app = new MiroWorkflowAnalyzerApp();
-
     switch (command.toLowerCase()) {
       case 'list':
-        await app.listBoards();
+        const listProjectId = args[1];
+        if (!listProjectId) {
+          console.log('❌ Please provide project ID: npm run analyze list <project-id>');
+          return;
+        }
+        const listApp = new MiroWorkflowAnalyzerApp(listProjectId);
+        await listApp.listBoards();
         break;
       
       case 'help':
@@ -231,28 +235,32 @@ Examples:
 This tool analyzes Miro boards to extract detailed workflow information using AI.
 
 Commands:
-  analyze <board-id> [output-dir]  - Analyze a specific board workflow
-  list                            - List all available boards in your account
-  help                           - Show this help message
+  analyze <project-id> [board-id] [output-dir]  - Analyze specific board for project
+  list <project-id>                            - List all available boards for project
+  help                                         - Show this help message
 
 Environment Variables Required:
   MIRO_ACCESS_TOKEN       - Your Miro API access token
   OPENAI_API_KEY          - Your OpenAI API key
   TARGET_API_BASE_URL     - Base URL for your target application API
   TARGET_API_ACCESS_TOKEN - Access token for your target application
-  PROJECT_ID              - Project ID in your target application
 
 Output:
   - Raw workflow data (JSON)
   - Formatted analysis report (Markdown)
   - Console summary with key insights
+  - Work items created in TargetProcess
         `);
         break;
       
       default:
-        // Assume it's a board ID
-        const boardId = command;
-        const outputDir = args[1];
+        // First arg is project ID, second is board ID
+        const projectId = command;
+        const boardId = args[1] || 'uXjVJXqJT1w='; // Default board ID
+        const outputDir = args[2];
+        
+        console.log(`🚀 Starting analysis for project ${projectId}, board ${boardId}`);
+        const app = new MiroWorkflowAnalyzerApp(projectId);
         await app.analyzeBoardWorkflow(boardId, outputDir);
         break;
     }

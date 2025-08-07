@@ -70,9 +70,29 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
+// Keep-alive mechanism to prevent sleeping
+const KEEP_ALIVE_INTERVAL = 14 * 60 * 1000; // 14 minutes
+let keepAliveTimer: NodeJS.Timeout;
+
+function keepAlive() {
+  console.log('🔄 Keep-alive ping to prevent sleeping');
+  // Self-ping to stay awake
+  if (process.env.NODE_ENV === 'production') {
+    fetch(`https://miro-workflow.onrender.com/health`)
+      .then(() => console.log('✅ Keep-alive successful'))
+      .catch(err => console.log('⚠️ Keep-alive failed:', err.message));
+  }
+}
+
 app.listen(port, () => {
   console.log(`🚀 Miro Workflow Analyzer API server running on port ${port}`);
   console.log(`📡 Health check: http://localhost:${port}/health`);
   console.log(`📊 Analyze endpoint: POST http://localhost:${port}/api/analyze`);
   console.log(`📋 List boards endpoint: GET http://localhost:${port}/api/boards?projectId=<id>`);
+  
+  // Start keep-alive timer in production
+  if (process.env.NODE_ENV === 'production') {
+    keepAliveTimer = setInterval(keepAlive, KEEP_ALIVE_INTERVAL);
+    console.log('🔄 Keep-alive service started (14 min intervals)');
+  }
 });
