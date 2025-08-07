@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { MiroWorkflowAnalyzerApp } from './index.js';
 
@@ -11,7 +11,7 @@ app.use(express.json());
 
 let analyzerApp: MiroWorkflowAnalyzerApp | null = null;
 
-app.post('/api/analyze', async (req, res) => {
+app.post('/api/analyze', async (req: Request, res: Response) => {
   try {
     const { projectId, boardId, outputDir } = req.body;
 
@@ -44,7 +44,7 @@ app.post('/api/analyze', async (req, res) => {
   }
 });
 
-app.get('/api/boards', async (req, res) => {
+app.get('/api/boards', async (req: Request, res: Response) => {
   try {
     const { projectId } = req.query;
 
@@ -66,7 +66,7 @@ app.get('/api/boards', async (req, res) => {
   }
 });
 
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 

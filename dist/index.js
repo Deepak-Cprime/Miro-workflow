@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import { WorkflowAnalyzer } from './services/workflowAnalyzer.js';
 import { OpenAIAnalyzer } from './services/openaiAnalyzer.js';
 import { WorkItemCreator } from './services/workItemCreator.js';
-import fs from 'fs/promises';
-import path from 'path';
+import { promises as fs } from 'fs';
+import * as path from 'path';
 dotenv.config();
 export class MiroWorkflowAnalyzerApp {
     workflowAnalyzer;
