@@ -10,7 +10,7 @@
     "dev": "tsx src/index.ts",
     "analyze": "npm run dev",
     "server": "tsx src/server.ts",
-    "start:server": "npm run build && node dist/server.js"
+    "start:server": "node dist/server.js"
   },
   "keywords": [
     "miro",
