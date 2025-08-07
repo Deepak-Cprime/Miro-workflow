@@ -9,17 +9,20 @@ import path from 'path';
 
 dotenv.config();
 
-class MiroWorkflowAnalyzerApp {
+export class MiroWorkflowAnalyzerApp {
   private workflowAnalyzer: WorkflowAnalyzer;
   private openaiAnalyzer: OpenAIAnalyzer;
   private workItemCreator: WorkItemCreator;
 
-  constructor() {
+  constructor(projectId?: string) {
     const miroToken = process.env.MIRO_ACCESS_TOKEN;
     const openaiApiKey = process.env.OPENAI_API_KEY;
     const baseUrl = process.env.TARGET_API_BASE_URL;
     const accessToken = process.env.TARGET_API_ACCESS_TOKEN;
-    const projectId = process.env.PROJECT_ID;
+    const envProjectId = process.env.PROJECT_ID;
+
+    // Use provided projectId or fall back to environment variable
+    const finalProjectId = projectId || envProjectId;
 
     if (!miroToken) {
       throw new Error('MIRO_ACCESS_TOKEN environment variable is required');
@@ -37,13 +40,13 @@ class MiroWorkflowAnalyzerApp {
       throw new Error('TARGET_API_ACCESS_TOKEN environment variable is required');
     }
 
-    if (!projectId) {
-      throw new Error('PROJECT_ID environment variable is required');
+    if (!finalProjectId) {
+      throw new Error('PROJECT_ID must be provided as parameter or environment variable');
     }
 
     this.workflowAnalyzer = new WorkflowAnalyzer(miroToken);
     this.openaiAnalyzer = new OpenAIAnalyzer(openaiApiKey);
-    this.workItemCreator = new WorkItemCreator(baseUrl, accessToken, parseInt(projectId));
+    this.workItemCreator = new WorkItemCreator(baseUrl, accessToken, parseInt(finalProjectId));
   }
 
   async analyzeBoardWorkflow(boardId: string, outputDir?: string): Promise<void> {
@@ -160,14 +163,14 @@ class MiroWorkflowAnalyzerApp {
     }
   }
 
-  async listBoards(): Promise<void> {
+  async listBoards(): Promise<any> {
     try {
       console.log('📋 Fetching available Miro boards...');
       const boardsResponse = await this.workflowAnalyzer.getMiroClient().listBoards(20);
       
       if (boardsResponse.data.length === 0) {
         console.log('No boards found in your Miro account');
-        return;
+        return [];
       }
       
       console.log('\n📊 Available Boards:');
@@ -182,6 +185,8 @@ class MiroWorkflowAnalyzerApp {
         }
         console.log('');
       });
+      
+      return boardsResponse.data;
       
     } catch (error) {
       console.error('❌ Error fetching boards:', error);
