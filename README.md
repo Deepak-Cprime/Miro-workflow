@@ -285,11 +285,87 @@ ISC License
 ### Debug Mode
 Set `NODE_ENV=development` for detailed logging.
 
+## 🚀 Deployment Options
+
+### Option 1: Cloud Deployment (Render - Recommended)
+
+1. **Push to GitHub/GitLab repository**
+
+2. **Deploy to Render:**
+   - Go to [render.com](https://render.com)
+   - Connect your repository
+   - Set Build Command: `npm ci && npm run build`
+   - Set Start Command: `npm run start:server`
+   - Add environment variables in Render dashboard
+
+3. **Your API will be available at:**
+   ```
+   https://your-app-name.onrender.com/api/analyze
+   ```
+
+### Option 2: Local with ngrok (Development)
+
+1. **Start the application:**
+   ```bash
+   npm run server
+   ```
+
+2. **Expose with ngrok:**
+   ```bash
+   ngrok http 3000
+   ```
+
+3. **Use the ngrok URL for external integrations**
+
+### Option 3: Local Network Access
+
+1. **Start the application:**
+   ```bash
+   npm run server
+   ```
+
+2. **Find your local IP address:**
+   ```bash
+   ipconfig  # Windows
+   ifconfig  # Mac/Linux
+   ```
+
+3. **Access via local network:**
+   ```
+   http://192.168.1.100:3000/api/analyze
+   ```
+
+### TargetProcess Automation Rule Integration
+
+For TargetProcess automation rules, use this JavaScript code:
+
+```javascript
+const api = context.getService("targetprocess/api/v2");
+const http = context.getService("http");
+
+const projectId = args.ResourceId;
+const miro_ai_url = "https://your-deployed-app.onrender.com/api/analyze";
+
+const request_body = JSON.stringify({
+  "projectId": projectId,
+  "boardId": "uXjVJXqJT1w="
+});
+
+const response = await http.postAsync(miro_ai_url, {
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: request_body
+});
+```
+
 ## 🔮 Future Enhancements
 
 - Support for multiple board analysis
-- Integration with other diagramming tools
+- Integration with other diagramming tools (Lucidchart, Draw.io)
 - Advanced workflow metrics and KPIs  
 - Export to BPMN format
 - Real-time workflow monitoring
-- Integration with project management tools
+- Integration with other project management tools (Jira, Azure DevOps)
+- Slack/Teams notifications for completed analyses
+- Custom AI prompts and analysis templates
