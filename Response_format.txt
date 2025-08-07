@@ -1,0 +1,474 @@
+POST {{base_url}}/api/v1/Epic/?Content-Type=application/json&access_token={{access_token}}
+body:
+{
+  "Name": "Epic-1 ",
+  "Description": "Testing the format for the post request",
+  "Project": {"Id": 286447}
+}
+Response:
+{
+    "ResourceType": "Epic",
+    "Id": 286851,
+    "Name": "Epic-1",
+    "Description": "Testing the format for the post request",
+    "StartDate": null,
+    "EndDate": null,
+    "CreateDate": "/Date(1754543331000+0200)/",
+    "ModifyDate": "/Date(1754543331000+0200)/",
+    "LastCommentDate": null,
+    "Tags": "",
+    "NumericPriority": 55316.644499999995,
+    "EntityVersion": 31325596,
+    "EntityType": {
+        "ResourceType": "EntityType",
+        "Id": 27,
+        "Name": "Epic",
+        "IsUnitInHourOnly": false
+    },
+    "LastEditor": {
+        "ResourceType": "GeneralUser",
+        "Id": 101733,
+        "FirstName": "Maram",
+        "LastName": null,
+        "Login": "maram.deepak@cprime.com",
+        "FullName": "Maram"
+    },
+    "Owner": {
+        "ResourceType": "GeneralUser",
+        "Id": 101733,
+        "FirstName": "Maram",
+        "LastName": null,
+        "Login": "maram.deepak@cprime.com",
+        "FullName": "Maram"
+    },
+    "Creator": {
+        "ResourceType": "GeneralUser",
+        "Id": 101733,
+        "FirstName": "Maram",
+        "LastName": null,
+        "Login": "maram.deepak@cprime.com",
+        "FullName": "Maram"
+    },
+    "LastCommentedUser": null,
+    "Project": {
+        "ResourceType": "Project",
+        "Id": 286447,
+        "Name": "AI Model",
+        "Process": {
+            "ResourceType": "Process",
+            "Id": 1
+        }
+    },
+    "LinkedTestPlan": null,
+    "Milestone": null,
+    "Effort": 0.0000,
+    "EffortCompleted": 0.0000,
+    "EffortToDo": 0.0000,
+    "Progress": 0.0000,
+    "TimeSpent": 0.0000,
+    "TimeRemain": 0.0000,
+    "LastStateChangeDate": "/Date(1754543331000+0200)/",
+    "PlannedStartDate": null,
+    "PlannedEndDate": null,
+    "Units": "h",
+    "Release": null,
+    "Iteration": null,
+    "TeamIteration": null,
+    "Team": null,
+    "Priority": {
+        "ResourceType": "Priority",
+        "Id": 42,
+        "Name": "Nice To Have",
+        "Importance": 4
+    },
+    "EntityState": {
+        "ResourceType": "EntityState",
+        "Id": 1649,
+        "Name": "Funnel",
+        "NumericPriority": 1649.0
+    },
+    "ResponsibleTeam": null,
+    "InitialEstimate": 0.00000,
+    "PortfolioEpic": null,
+    "Build": null,
+    "Package": null,
+    "SolutionTrain": null,
+    "SolutionTrainProgramincrement": null,
+    "Solution": null,
+    "SolutionVersion": null,
+    "TraditionalProject": null,
+    "CustomFields": [
+        {
+            "Name": "Value Type",
+            "Type": "DropDown",
+            "Value": null
+        },
+        {
+            "Name": "WSJF",
+            "Type": "Number",
+            "Value": null
+        },
+        {
+            "Name": "RR, OE Value",
+            "Type": "DropDown",
+            "Value": null
+        },
+        {
+            "Name": "Time Criticality",
+            "Type": "DropDown",
+            "Value": null
+        },
+        {
+            "Name": "Job Size",
+            "Type": "DropDown",
+            "Value": null
+        },
+        {
+            "Name": "User, Business Value",
+            "Type": "DropDown",
+            "Value": null
+        },
+        {
+            "Name": "Planned Investment",
+            "Type": "Money",
+            "Value": null
+        },
+        {
+            "Name": "Participatory Budgeting",
+            "Type": "Money",
+            "Value": null
+        },
+        {
+            "Name": "MVP",
+            "Type": "CheckBox",
+            "Value": false
+        },
+        {
+            "Name": "Total Hours",
+            "Type": "Number",
+            "Value": null
+        },
+        {
+            "Name": "teams value",
+            "Type": "Text",
+            "Value": null
+        },
+        {
+            "Name": "RAG1",
+            "Type": "DropDown",
+            "Value": null
+        },
+        {
+            "Name": "RAG2",
+            "Type": "DropDown",
+            "Value": null
+        },
+        {
+            "Name": "Domain",
+            "Type": "Text",
+            "Value": null
+        },
+        {
+            "Name": "Customer Value",
+            "Type": "DropDown",
+            "Value": null
+        },
+        {
+            "Name": "Complexity",
+            "Type": "DropDown",
+            "Value": null
+        },
+        {
+            "Name": "Required Resources",
+            "Type": "DropDown",
+            "Value": null
+        },
+        {
+            "Name": "Strategic Impact",
+            "Type": "DropDown",
+            "Value": null
+        },
+        {
+            "Name": "Score",
+            "Type": "Number",
+            "Value": null
+        },
+        {
+            "Name": "Estimated Effort",
+            "Type": "DropDown",
+            "Value": null
+        }
+    ]
+}
+
+POST {{base_url}}/api/v1/features/?Content-Type=application/json&access_token={{access_token}}
+Body:
+{
+  "Name": "Feature-1 ",
+  "Description": "Testing the format for the post request",
+  "Epic":{"Id":286851 },
+  "Project": {"Id": 286447}
+}
+Response:
+<Feature ResourceType="Feature" Id="286853" Name="Feature-1">
+    <Description>Testing the format for the post request</Description>
+    <StartDate nil="true" />
+    <EndDate nil="true" />
+    <CreateDate>2025-08-07T07:11:10</CreateDate>
+    <ModifyDate>2025-08-07T07:11:10</ModifyDate>
+    <LastCommentDate nil="true" />
+    <Tags></Tags>
+    <NumericPriority>55371.9749736611</NumericPriority>
+    <EntityVersion>31325619</EntityVersion>
+    <Effort>0.0000</Effort>
+    <EffortCompleted>0.0000</EffortCompleted>
+    <EffortToDo>0.0000</EffortToDo>
+    <Progress>0.0000</Progress>
+    <TimeSpent>0.0000</TimeSpent>
+    <TimeRemain>0.0000</TimeRemain>
+    <LastStateChangeDate>2025-08-07T07:11:10</LastStateChangeDate>
+    <PlannedStartDate nil="true" />
+    <PlannedEndDate nil="true" />
+    <Units>h</Units>
+    <InitialEstimate>0.0000</InitialEstimate>
+    <EntityType ResourceType="EntityType" Id="9" Name="Feature" IsUnitInHourOnly="false" />
+    <LastEditor ResourceType="GeneralUser" Id="101733">
+        <FirstName>Maram</FirstName>
+        <LastName nil="true" />
+        <Login>maram.deepak@cprime.com</Login>
+        <FullName>Maram</FullName>
+    </LastEditor>
+    <Owner ResourceType="GeneralUser" Id="101733">
+        <FirstName>Maram</FirstName>
+        <LastName nil="true" />
+        <Login>maram.deepak@cprime.com</Login>
+        <FullName>Maram</FullName>
+    </Owner>
+    <Creator ResourceType="GeneralUser" Id="101733">
+        <FirstName>Maram</FirstName>
+        <LastName nil="true" />
+        <Login>maram.deepak@cprime.com</Login>
+        <FullName>Maram</FullName>
+    </Creator>
+    <LastCommentedUser nil="true" />
+    <Project ResourceType="Project" Id="286447" Name="AI Model">
+        <Process ResourceType="Process" Id="1" />
+    </Project>
+    <LinkedTestPlan nil="true" />
+    <Milestone nil="true" />
+    <Release nil="true" />
+    <Iteration nil="true" />
+    <TeamIteration nil="true" />
+    <Team nil="true" />
+    <Priority ResourceType="Priority" Id="10" Name="Will Not Have">
+        <Importance>4</Importance>
+    </Priority>
+    <EntityState ResourceType="EntityState" Id="87" Name="Funnel">
+        <NumericPriority>1</NumericPriority>
+    </EntityState>
+    <ResponsibleTeam nil="true" />
+    <PortfolioEpic nil="true" />
+    <Epic ResourceType="Epic" Id="286851" Name="Epic-1" />
+    <Build nil="true" />
+    <Package nil="true" />
+    <AgileReleaseTrain nil="true" />
+    <Product nil="true" />
+    <ProductVersion nil="true" />
+    <Solution nil="true" />
+    <SolutionVersion nil="true" />
+    <TraditionalProject nil="true" />
+    <CustomFields>
+        <Field Type="Number">
+            <Name>WSJF</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="DropDown">
+            <Name>Value Type</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="Money">
+            <Name>Planned Investment</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="DropDown">
+            <Name>Environment</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="Number">
+            <Name>Collective Estimate</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="CheckBox">
+            <Name>MVP</Name>
+            <Value>false</Value>
+        </Field>
+        <Field Type="Number">
+            <Name>Total Hours</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="CheckBox">
+            <Name>Demo Completed</Name>
+            <Value>false</Value>
+        </Field>
+        <Field Type="Text">
+            <Name>Email</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="Number">
+            <Name>CoD</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="Number">
+            <Name>User_Business Value</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="Number">
+            <Name>Time Critically</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="Number">
+            <Name>RR,OE Value</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="Number">
+            <Name>Job Size Features</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="CheckBox">
+            <Name>Generate_US</Name>
+            <Value>false</Value>
+        </Field>
+        <Field Type="Text">
+            <Name>Domain</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="CheckBox">
+            <Name>CapEx</Name>
+            <Value>false</Value>
+        </Field>
+        <Field Type="DropDown">
+            <Name>Customer Value</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="DropDown">
+            <Name>Complexity</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="DropDown">
+            <Name>Required Resources</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="DropDown">
+            <Name>Strategic Impact</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="Number">
+            <Name>Score</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="DropDown">
+            <Name>Estimated Effort</Name>
+            <Value nil="true" />
+        </Field>
+    </CustomFields>
+</Feature>
+POST {{base_url}}/api/v1/UserStory/?Content-Type=application/json&access_token={{access_token}}
+Body:
+{
+  "Name": "US-1 ",
+  "Description": "Testing the format for the post request",
+  "Feature":{"Id":286853 },
+  "Project": {"Id": 286447}
+}
+Response:
+<UserStory ResourceType="UserStory" Id="286854" Name="US-1">
+    <Description>Testing the format for the post request</Description>
+    <StartDate nil="true" />
+    <EndDate nil="true" />
+    <CreateDate>2025-08-07T07:17:35</CreateDate>
+    <ModifyDate>2025-08-07T07:17:35</ModifyDate>
+    <LastCommentDate nil="true" />
+    <Tags></Tags>
+    <NumericPriority>55399.660961148</NumericPriority>
+    <EntityVersion>31325630</EntityVersion>
+    <Effort>0.0000</Effort>
+    <EffortCompleted>0.0000</EffortCompleted>
+    <EffortToDo>0.0000</EffortToDo>
+    <Progress>0.0000</Progress>
+    <TimeSpent>0.0000</TimeSpent>
+    <TimeRemain>0.0000</TimeRemain>
+    <LastStateChangeDate>2025-08-07T07:17:35</LastStateChangeDate>
+    <PlannedStartDate nil="true" />
+    <PlannedEndDate nil="true" />
+    <Units>h</Units>
+    <InitialEstimate>0.0000</InitialEstimate>
+    <EntityType ResourceType="EntityType" Id="4" Name="UserStory" IsUnitInHourOnly="false" />
+    <LastEditor ResourceType="GeneralUser" Id="101733">
+        <FirstName>Maram</FirstName>
+        <LastName nil="true" />
+        <Login>maram.deepak@cprime.com</Login>
+        <FullName>Maram</FullName>
+    </LastEditor>
+    <Owner ResourceType="GeneralUser" Id="101733">
+        <FirstName>Maram</FirstName>
+        <LastName nil="true" />
+        <Login>maram.deepak@cprime.com</Login>
+        <FullName>Maram</FullName>
+    </Owner>
+    <Creator ResourceType="GeneralUser" Id="101733">
+        <FirstName>Maram</FirstName>
+        <LastName nil="true" />
+        <Login>maram.deepak@cprime.com</Login>
+        <FullName>Maram</FullName>
+    </Creator>
+    <LastCommentedUser nil="true" />
+    <Project ResourceType="Project" Id="286447" Name="AI Model">
+        <Process ResourceType="Process" Id="1" />
+    </Project>
+    <LinkedTestPlan nil="true" />
+    <Milestone nil="true" />
+    <Release nil="true" />
+    <Iteration nil="true" />
+    <TeamIteration nil="true" />
+    <Team nil="true" />
+    <Priority ResourceType="Priority" Id="5" Name="Low">
+        <Importance>5</Importance>
+    </Priority>
+    <EntityState ResourceType="EntityState" Id="1" Name="Open">
+        <NumericPriority>1</NumericPriority>
+    </EntityState>
+    <ResponsibleTeam nil="true" />
+    <Feature ResourceType="Feature" Id="286853" Name="Feature-1" />
+    <Build nil="true" />
+    <Package nil="true" />
+    <IterationGoal nil="true" />
+    <Product nil="true" />
+    <Component nil="true" />
+    <ComponentVersion nil="true" />
+    <ProductVersion nil="true" />
+    <Solution nil="true" />
+    <SolutionVersion nil="true" />
+    <TraditionalProject nil="true" />
+    <CustomFields>
+        <Field Type="DropDown">
+            <Name>Class of Service</Name>
+            <Value>Standard</Value>
+        </Field>
+        <Field Type="DropDown">
+            <Name>Jira Priority</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="Text">
+            <Name>Domain</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="Text">
+            <Name>Department</Name>
+            <Value nil="true" />
+        </Field>
+        <Field Type="CheckBox">
+            <Name>CapEx</Name>
+            <Value>false</Value>
+        </Field>
+    </CustomFields>
+</UserStory>
