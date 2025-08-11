@@ -6,7 +6,7 @@ export interface WorkItemResult {
     error?: string;
 }
 export interface WorkItemCreationResults {
-    epic: WorkItemResult;
+    epics: WorkItemResult[];
     features: WorkItemResult[];
     userStories: WorkItemResult[];
 }

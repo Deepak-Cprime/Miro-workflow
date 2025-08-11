@@ -10,14 +10,11 @@ export class MiroWorkflowAnalyzerApp {
     workflowAnalyzer;
     openaiAnalyzer;
     workItemCreator;
-    constructor(projectId) {
+    constructor() {
         const miroToken = process.env.MIRO_ACCESS_TOKEN;
         const openaiApiKey = process.env.OPENAI_API_KEY;
         const baseUrl = process.env.TARGET_API_BASE_URL;
         const accessToken = process.env.TARGET_API_ACCESS_TOKEN;
-        const envProjectId = process.env.PROJECT_ID;
-        // Use provided projectId or fall back to environment variable
-        const finalProjectId = projectId || envProjectId;
         if (!miroToken) {
             throw new Error('MIRO_ACCESS_TOKEN environment variable is required');
         }
@@ -30,14 +27,11 @@ export class MiroWorkflowAnalyzerApp {
         if (!accessToken) {
             throw new Error('TARGET_API_ACCESS_TOKEN environment variable is required');
         }
-        if (!finalProjectId) {
-            throw new Error('PROJECT_ID must be provided as parameter or environment variable');
-        }
         this.workflowAnalyzer = new WorkflowAnalyzer(miroToken);
         this.openaiAnalyzer = new OpenAIAnalyzer(openaiApiKey);
-        this.workItemCreator = new WorkItemCreator(baseUrl, accessToken, parseInt(finalProjectId));
+        this.workItemCreator = new WorkItemCreator(baseUrl, accessToken);
     }
-    async analyzeBoardWorkflow(boardId, outputDir) {
+    async analyzeBoardWorkflow(boardId, outputDir, workflowName) {
         try {
             console.log(`🔍 Starting analysis of Miro board: ${boardId}`);
             // Step 1: Extract workflow data from Miro
@@ -50,7 +44,8 @@ export class MiroWorkflowAnalyzerApp {
             console.log('✅ AI analysis completed');
             // Step 3: Create work items via API
             console.log('🚀 Creating work items in target system...');
-            const workItemResults = await this.workItemCreator.createWorkItems(openaiInsights);
+            const boardName = workflowName || workflowData.boardInfo.name;
+            const workItemResults = await this.workItemCreator.createWorkItems(openaiInsights, boardName);
             // Step 4: Generate comprehensive report (optional)
             console.log('📝 Generating comprehensive report...');
             const report = await this.openaiAnalyzer.generateWorkflowReport(workflowData, openaiInsights);
@@ -97,7 +92,7 @@ export class MiroWorkflowAnalyzerApp {
             console.log(`📋 Report: ${reportPath}`);
             console.log(`🎯 Work Items: ${workItemsPath}`);
             console.log('\n🚀 Work Item Creation Results:');
-            console.log(`✅ Epic Created: ${workItemResults.epic.success ? workItemResults.epic.id : 'Failed'}`);
+            console.log(`✅ Epics Created: ${workItemResults.epics.filter(e => e.success).length}/${workItemResults.epics.length}`);
             console.log(`✅ Features Created: ${workItemResults.features.filter(f => f.success).length}/${workItemResults.features.length}`);
             console.log(`✅ User Stories Created: ${workItemResults.userStories.filter(u => u.success).length}/${workItemResults.userStories.length}`);
             // Display quick insights
@@ -121,6 +116,8 @@ export class MiroWorkflowAnalyzerApp {
                     console.log(`${index + 1}. [${risk.impact.toUpperCase()}] ${risk.risk}`);
                 });
             }
+            const firstEpicId = workItemResults.epics.find(e => e.success)?.id;
+            return { projectId: firstEpicId };
         }
         catch (error) {
             console.error('❌ Error analyzing workflow:', error);
@@ -163,25 +160,20 @@ async function main() {
 🔍 Miro Workflow Analyzer
 
 Usage:
-  npm run analyze <project-id> [board-id] [output-dir]  - Analyze with project ID
-  npm run analyze list <project-id>                      - List boards for project
-  npm run analyze help                                   - Show this help
+  npm run analyze [board-id] [output-dir] [workflow-name]  - Analyze Miro board
+  npm run analyze list                                     - List available boards
+  npm run analyze help                                     - Show this help
 
 Examples:
-  npm run analyze 286882 uXjVJXqJT1w= ./reports
-  npm run analyze 286882 uXjVJXqJT1w=
-  npm run analyze list 286882
+  npm run analyze uXjVJXqJT1w= ./reports "Dashboard Redesign"
+  npm run analyze uXjVJXqJT1w=
+  npm run analyze list
       `);
             return;
         }
         switch (command.toLowerCase()) {
             case 'list':
-                const listProjectId = args[1];
-                if (!listProjectId) {
-                    console.log('❌ Please provide project ID: npm run analyze list <project-id>');
-                    return;
-                }
-                const listApp = new MiroWorkflowAnalyzerApp(listProjectId);
+                const listApp = new MiroWorkflowAnalyzerApp();
                 await listApp.listBoards();
                 break;
             case 'help':
@@ -191,31 +183,32 @@ Examples:
 This tool analyzes Miro boards to extract detailed workflow information using AI.
 
 Commands:
-  analyze <project-id> [board-id] [output-dir]  - Analyze specific board for project
-  list <project-id>                            - List all available boards for project
-  help                                         - Show this help message
+  analyze [board-id] [output-dir] [workflow-name]  - Analyze specific board
+  list                                             - List all available boards
+  help                                             - Show this help message
 
 Environment Variables Required:
   MIRO_ACCESS_TOKEN       - Your Miro API access token
   OPENAI_API_KEY          - Your OpenAI API key
-  TARGET_API_BASE_URL     - Base URL for your target application API
+  TARGET_API_BASE_URL     - Base URL for your target application API (e.g., https://company.tpondemand.com)
   TARGET_API_ACCESS_TOKEN - Access token for your target application
 
-Output:
+Features:
+  - Automatically creates TargetProcess project with AI-related name
+  - Extracts project ID and creates complete hierarchy (Epic → Features → User Stories)
   - Raw workflow data (JSON)
   - Formatted analysis report (Markdown)
   - Console summary with key insights
-  - Work items created in TargetProcess
         `);
                 break;
             default:
-                // First arg is project ID, second is board ID
-                const projectId = command;
-                const boardId = args[1] || 'uXjVJXqJT1w='; // Default board ID
-                const outputDir = args[2];
-                console.log(`🚀 Starting analysis for project ${projectId}, board ${boardId}`);
-                const app = new MiroWorkflowAnalyzerApp(projectId);
-                await app.analyzeBoardWorkflow(boardId, outputDir);
+                // First arg is board ID, second is output dir, third is workflow name
+                const boardId = command || 'uXjVJXqJT1w='; // Default board ID or use provided
+                const outputDir = args[1];
+                const workflowName = args[2];
+                console.log(`🚀 Starting analysis for board ${boardId}`);
+                const app = new MiroWorkflowAnalyzerApp();
+                await app.analyzeBoardWorkflow(boardId, outputDir, workflowName);
                 break;
         }
     }

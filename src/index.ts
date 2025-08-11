@@ -119,7 +119,7 @@ export class MiroWorkflowAnalyzerApp {
       console.log(`🎯 Work Items: ${workItemsPath}`);
       
       console.log('\n🚀 Work Item Creation Results:');
-      console.log(`✅ Epic Created: ${workItemResults.epic.success ? workItemResults.epic.id : 'Failed'}`);
+      console.log(`✅ Epics Created: ${workItemResults.epics.filter(e => e.success).length}/${workItemResults.epics.length}`);
       console.log(`✅ Features Created: ${workItemResults.features.filter(f => f.success).length}/${workItemResults.features.length}`);
       console.log(`✅ User Stories Created: ${workItemResults.userStories.filter(u => u.success).length}/${workItemResults.userStories.length}`);
       
@@ -150,7 +150,8 @@ export class MiroWorkflowAnalyzerApp {
         });
       }
 
-      return { projectId: workItemResults.epic.id ? workItemResults.epic.id : undefined };
+      const firstEpicId = workItemResults.epics.find(e => e.success)?.id;
+      return { projectId: firstEpicId };
       
     } catch (error) {
       console.error('❌ Error analyzing workflow:', error);

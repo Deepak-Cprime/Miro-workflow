@@ -3,7 +3,9 @@ export declare class MiroWorkflowAnalyzerApp {
     private workflowAnalyzer;
     private openaiAnalyzer;
     private workItemCreator;
-    constructor(projectId?: string);
-    analyzeBoardWorkflow(boardId: string, outputDir?: string): Promise<void>;
+    constructor();
+    analyzeBoardWorkflow(boardId: string, outputDir?: string, workflowName?: string): Promise<{
+        projectId?: number;
+    }>;
     listBoards(): Promise<any>;
 }

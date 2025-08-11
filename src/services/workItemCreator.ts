@@ -9,7 +9,7 @@ export interface WorkItemResult {
 }
 
 export interface WorkItemCreationResults {
-  epic: WorkItemResult;
+  epics: WorkItemResult[];
   features: WorkItemResult[];
   userStories: WorkItemResult[];
 }
@@ -74,7 +74,7 @@ export class WorkItemCreator {
 
   async createWorkItems(insights: OpenAIWorkflowInsights, workflowName?: string): Promise<WorkItemCreationResults> {
     const results: WorkItemCreationResults = {
-      epic: { success: false, name: '' },
+      epics: [],
       features: [],
       userStories: []
     };
@@ -94,46 +94,56 @@ export class WorkItemCreator {
         console.log(`✅ Project "${projectResult.name}" created with ID: ${projectResult.id}`);
       }
 
-      // Step 1: Create Epic
-      console.log('📋 Creating Epic...');
-      if (insights.epics.length > 0) {
-        const epic = insights.epics[0]; // Take the first epic
+      // Step 1: Create All Epics
+      console.log('📋 Creating Epics...');
+      const epicIdMap: { [epicId: string]: number } = {};
+      
+      for (const epic of insights.epics) {
         const epicResult = await this.createEpic(epic);
-        results.epic = epicResult;
+        results.epics.push(epicResult);
         
         if (epicResult.success && epicResult.id) {
-          console.log(`✅ Epic created with ID: ${epicResult.id}`);
-          
-          // Step 2: Create Features
-          console.log('⚡ Creating Features...');
-          for (const feature of insights.features) {
-            const featureResult = await this.createFeature(feature, epicResult.id);
-            results.features.push(featureResult);
-            
-            if (featureResult.success && featureResult.id) {
-              console.log(`✅ Feature "${feature.title}" created with ID: ${featureResult.id}`);
-              
-              // Step 3: Create User Stories for this feature
-              console.log(`👥 Creating User Stories for feature "${feature.title}"...`);
-              for (const userStory of feature.userStories) {
-                const storyResult = await this.createUserStory(userStory, featureResult.id);
-                results.userStories.push(storyResult);
-                
-                if (storyResult.success && storyResult.id) {
-                  console.log(`✅ User Story "${userStory.title}" created with ID: ${storyResult.id}`);
-                } else {
-                  console.error(`❌ Failed to create User Story "${userStory.title}": ${storyResult.error}`);
-                }
-              }
-            } else {
-              console.error(`❌ Failed to create Feature "${feature.title}": ${featureResult.error}`);
-            }
-          }
+          console.log(`✅ Epic "${epic.title}" created with ID: ${epicResult.id}`);
+          epicIdMap[epic.epicId] = epicResult.id;
         } else {
           console.error(`❌ Failed to create Epic "${epic.title}": ${epicResult.error}`);
         }
-      } else {
+      }
+
+      if (insights.epics.length === 0) {
         console.log('⚠️ No epics found in analysis');
+      }
+
+      // Step 2: Create Features (linked to correct epics)
+      console.log('⚡ Creating Features...');
+      for (const feature of insights.features) {
+        const epicId = epicIdMap[feature.epicId];
+        if (!epicId) {
+          console.error(`❌ Cannot create feature "${feature.title}": Epic ${feature.epicId} not found`);
+          continue;
+        }
+
+        const featureResult = await this.createFeature(feature, epicId);
+        results.features.push(featureResult);
+        
+        if (featureResult.success && featureResult.id) {
+          console.log(`✅ Feature "${feature.title}" created with ID: ${featureResult.id}`);
+          
+          // Step 3: Create User Stories for this feature
+          console.log(`👥 Creating User Stories for feature "${feature.title}"...`);
+          for (const userStory of feature.userStories) {
+            const storyResult = await this.createUserStory(userStory, featureResult.id);
+            results.userStories.push(storyResult);
+            
+            if (storyResult.success && storyResult.id) {
+              console.log(`✅ User Story "${userStory.title}" created with ID: ${storyResult.id}`);
+            } else {
+              console.error(`❌ Failed to create User Story "${userStory.title}": ${storyResult.error}`);
+            }
+          }
+        } else {
+          console.error(`❌ Failed to create Feature "${feature.title}": ${featureResult.error}`);
+        }
       }
 
     } catch (error) {
