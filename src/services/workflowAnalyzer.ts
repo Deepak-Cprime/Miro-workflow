@@ -123,11 +123,11 @@ export class WorkflowAnalyzer {
 
       // Find connections for this item
       const incomingConnections = connectors
-        .filter(conn => conn.endItem.id === item.id)
+        .filter(conn => conn && conn.endItem && conn.endItem.id === item.id)
         .map(conn => conn.id);
       
       const outgoingConnections = connectors
-        .filter(conn => conn.startItem.id === item.id)
+        .filter(conn => conn && conn.startItem && conn.startItem.id === item.id)
         .map(conn => conn.id);
 
       // Extract title and description based on item type
@@ -162,13 +162,15 @@ export class WorkflowAnalyzer {
   }
 
   private buildWorkflowConnections(connectors: MiroConnector[]): WorkflowConnection[] {
-    return connectors.map(connector => ({
-      id: connector.id,
-      from: connector.startItem.id,
-      to: connector.endItem.id,
-      label: connector.captions?.[0]?.content || undefined,
-      type: 'connector'
-    }));
+    return connectors
+      .filter(connector => connector && connector.startItem && connector.endItem)
+      .map(connector => ({
+        id: connector.id,
+        from: connector.startItem.id,
+        to: connector.endItem.id,
+        label: connector.captions?.[0]?.content || undefined,
+        type: 'connector'
+      }));
   }
 
   private async analyzeGroups(boardId: string, groups: MiroGroup[]): Promise<Array<{ id: string; name?: string; nodeIds: string[] }>> {

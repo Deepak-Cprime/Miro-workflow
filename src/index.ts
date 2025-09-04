@@ -19,6 +19,7 @@ export class MiroWorkflowAnalyzerApp {
     const openaiApiKey = process.env.OPENAI_API_KEY;
     const baseUrl = process.env.TARGET_API_BASE_URL;
     const accessToken = process.env.TARGET_API_ACCESS_TOKEN;
+    const projectId = process.env.PROJECT_ID;
 
     if (!miroToken) {
       throw new Error('MIRO_ACCESS_TOKEN environment variable is required');
@@ -38,7 +39,7 @@ export class MiroWorkflowAnalyzerApp {
 
     this.workflowAnalyzer = new WorkflowAnalyzer(miroToken);
     this.openaiAnalyzer = new OpenAIAnalyzer(openaiApiKey);
-    this.workItemCreator = new WorkItemCreator(baseUrl, accessToken);
+    this.workItemCreator = new WorkItemCreator(baseUrl, accessToken, projectId ? parseInt(projectId) : undefined);
   }
 
   async analyzeBoardWorkflow(boardId: string, outputDir?: string, workflowName?: string): Promise<{ projectId?: number }> {
