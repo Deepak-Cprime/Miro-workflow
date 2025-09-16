@@ -105,10 +105,10 @@ export class WorkflowAnalyzer {
             }
             // Find connections for this item
             const incomingConnections = connectors
-                .filter(conn => conn.endItem.id === item.id)
+                .filter(conn => conn && conn.endItem && conn.endItem.id === item.id)
                 .map(conn => conn.id);
             const outgoingConnections = connectors
-                .filter(conn => conn.startItem.id === item.id)
+                .filter(conn => conn && conn.startItem && conn.startItem.id === item.id)
                 .map(conn => conn.id);
             // Extract title and description based on item type
             const { title, description } = this.extractItemContent(item);
@@ -139,7 +139,9 @@ export class WorkflowAnalyzer {
         return nodes;
     }
     buildWorkflowConnections(connectors) {
-        return connectors.map(connector => ({
+        return connectors
+            .filter(connector => connector && connector.startItem && connector.endItem)
+            .map(connector => ({
             id: connector.id,
             from: connector.startItem.id,
             to: connector.endItem.id,
