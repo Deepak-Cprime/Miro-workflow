@@ -68,7 +68,7 @@ function keepAlive() {
   console.log('🔄 Keep-alive ping to prevent sleeping');
   // Self-ping to stay awake
   if (process.env.NODE_ENV === 'production') {
-    fetch(`https://miro-workflow.onrender.com/health`)
+    fetch(`https://miro-workflow-analyzer.onrender.com/health`)
       .then(() => console.log('✅ Keep-alive successful'))
       .catch(err => console.log('⚠️ Keep-alive failed:', err.message));
   }
