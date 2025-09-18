@@ -36,7 +36,7 @@ app.post('/api/analyze', async (req: Request, res: Response) => {
         if (!analyzerApp) {
           analyzerApp = new MiroWorkflowAnalyzerApp();
         }
-        const result = await analyzerApp.analyzeBoardWorkflow(boardId, outputDir, workflowName);
+        const result = await analyzerApp.analyzeBoardWorkflow(boardId, outputDir, workflowName, projectId);
         console.log(`✅ Analysis completed for board ${boardId}, project ${projectId || 'unknown'}`);
       } catch (error) {
         console.error(`❌ Background analysis failed for board ${boardId}:`, error);

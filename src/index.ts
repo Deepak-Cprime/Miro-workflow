@@ -42,7 +42,7 @@ export class MiroWorkflowAnalyzerApp {
     this.workItemCreator = new WorkItemCreator(baseUrl, accessToken, projectId ? parseInt(projectId) : undefined);
   }
 
-  async analyzeBoardWorkflow(boardId: string, outputDir?: string, workflowName?: string): Promise<{ projectId?: number }> {
+  async analyzeBoardWorkflow(boardId: string, outputDir?: string, workflowName?: string, projectId?: string): Promise<{ projectId?: number }> {
     try {
       console.log(`🔍 Starting analysis of Miro board: ${boardId}`);
       
@@ -61,7 +61,16 @@ export class MiroWorkflowAnalyzerApp {
       // Step 3: Create work items via API
       console.log('🚀 Creating work items in target system...');
       const boardName = workflowName || workflowData.boardInfo.name;
-      const workItemResults = await this.workItemCreator.createWorkItems(openaiInsights, boardName);
+
+      // If projectId is provided, create a new WorkItemCreator with that specific projectId
+      let workItemCreator = this.workItemCreator;
+      if (projectId) {
+        const baseUrl = process.env.TARGET_API_BASE_URL!;
+        const accessToken = process.env.TARGET_API_ACCESS_TOKEN!;
+        workItemCreator = new WorkItemCreator(baseUrl, accessToken, parseInt(projectId));
+      }
+
+      const workItemResults = await workItemCreator.createWorkItems(openaiInsights, boardName);
       
       // Step 4: Generate comprehensive report (optional)
       console.log('📝 Generating comprehensive report...');

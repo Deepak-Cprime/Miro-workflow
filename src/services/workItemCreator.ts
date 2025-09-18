@@ -85,13 +85,15 @@ export class WorkItemCreator {
         console.log('🚀 No project ID set, creating new project...');
         const projectName = workflowName || 'Miro_Board_Analysis';
         const projectResult = await this.createProject(projectName);
-        
+
         if (!projectResult.success) {
           console.error(`❌ Failed to create project: ${projectResult.error}`);
           return results;
         }
-        
+
         console.log(`✅ Project "${projectResult.name}" created with ID: ${projectResult.id}`);
+      } else {
+        console.log(`✅ Using existing project ID: ${this.projectId}`);
       }
 
       // Step 1: Create All Epics
