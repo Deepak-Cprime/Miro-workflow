@@ -13,29 +13,41 @@ let analyzerApp: MiroWorkflowAnalyzerApp | null = null;
 
 app.post('/api/analyze', async (req: Request, res: Response) => {
   try {
-    const { boardId, outputDir, workflowName } = req.body;
+    const { boardId, outputDir, workflowName, projectId } = req.body;
 
     if (!boardId) {
       return res.status(400).json({ error: 'Board ID is required' });
     }
 
-    console.log(`🚀 Starting workflow analysis for board ${boardId}`);
+    console.log(`🚀 Starting workflow analysis for board ${boardId}, project ${projectId}`);
 
-    analyzerApp = new MiroWorkflowAnalyzerApp();
-    const result = await analyzerApp.analyzeBoardWorkflow(boardId, outputDir, workflowName);
+    // Send immediate response to avoid timeout
+    res.json({
+      success: true,
+      message: 'Workflow analysis started successfully',
+      projectId: projectId || 'unknown',
+      boardId,
+      status: 'processing'
+    });
 
-    res.json({ 
-      success: true, 
-      message: 'Workflow analysis completed successfully',
-      projectId: result.projectId,
-      boardId
+    // Process analysis in background after response is sent
+    setImmediate(async () => {
+      try {
+        if (!analyzerApp) {
+          analyzerApp = new MiroWorkflowAnalyzerApp();
+        }
+        const result = await analyzerApp.analyzeBoardWorkflow(boardId, outputDir, workflowName);
+        console.log(`✅ Analysis completed for board ${boardId}, project ${projectId || 'unknown'}`);
+      } catch (error) {
+        console.error(`❌ Background analysis failed for board ${boardId}:`, error);
+      }
     });
 
   } catch (error) {
     console.error('❌ API Error:', error);
-    res.status(500).json({ 
-      error: 'Internal server error', 
-      message: error instanceof Error ? error.message : 'Unknown error' 
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
